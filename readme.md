@@ -15,3 +15,14 @@ cp -a etc_cassandra-4.1.3_vanilla etc/cass3
 ```
 docker-compose up -d
 ```
+
+## Enter the cluster
+
+```
+docker exec -it cass1 cqlsh
+```
+
+## Stopping the cluster
+```
+docker-compose stop
+```
