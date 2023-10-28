@@ -1,3 +1,7 @@
+###
+### ORIGINAL DOCKER_COMPOSE FROM https://blog.digitalis.io/containerized-cassandra-cluster-for-local-testing-60d24d70dcc4
+###
+
 version: '2.4' # 2.4 is the last version that supports depends_on conditions for service health
 networks:
   cassandra:  # docker network where all cassandra nodes will be put in
