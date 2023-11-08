@@ -27,7 +27,7 @@ docker-compose up -d
 docker exec -it cass1 cqlsh
 ```
 
-## 1.3 Stopping the cluster
+## 1.4 Stopping the cluster
 ```
 docker-compose stop
 ```
