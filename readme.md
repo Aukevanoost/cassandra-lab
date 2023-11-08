@@ -11,7 +11,7 @@ Created to get a better understanding of how Cassandra works and how to manage y
 
 ## Sources used for this repository
 
-The results have been slightly modified to match our use-case, but in essence these sources helped us make this happen, thanks ❤️.
+The results have been slightly modified to match our use-case, but in essence these sources helped us make this happen, massive thanks ❤️.
 
 *Create a docker cluster* - 
 https://blog.digitalis.io/containerized-cassandra-cluster-for-local-testing-60d24d70dcc4<br />
