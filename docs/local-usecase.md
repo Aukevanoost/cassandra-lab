@@ -107,26 +107,37 @@ AND HEADER = TRUE;
 
 ## Question 3
 
-**Table four: collisions_by_contributing_factor**
+**Table four: affected_groups_by_contributing_factor**
 
 ```cql
-CREATE COLUMNFAMILY collisions_by_contributing_factor (
+CREATE COLUMNFAMILY affected_groups_by_contributing_factor (
     country_iso_code varchar,  
-    count int,  
+    COUNT int,
     CONTRIBUTING_FACTOR_VEHICLE varchar,
-    number_of_persons_injured int, 
-    number_of_persons_killed int,  
+    NUMBER_OF_PERSONS_INJURED int,
+    NUMBER_OF_PERSONS_KILLED int,
+    NUMBER_OF_PEDESTRIANS_INJURED int,NUMBER_OF_PEDESTRIANS_KILLED int,
+    NUMBER_OF_CYCLIST_INJURED int,
+    NUMBER_OF_CYCLIST_KILLED int,
+    NUMBER_OF_MOTORIST_INJURED int,
+    NUMBER_OF_MOTORIST_KILLED int,
     PRIMARY KEY ((country_iso_code), count) 
 );
 
-COPY collision_prone_areas.collisions_by_contributing_factor(
+COPY collision_prone_areas.affected_groups_by_contributing_factor(
     COUNTRY_ISO_CODE,
     CONTRIBUTING_FACTOR_VEHICLE,
     NUMBER_OF_PERSONS_INJURED,
     NUMBER_OF_PERSONS_KILLED,
+    NUMBER_OF_PEDESTRIANS_INJURED,
+    NUMBER_OF_PEDESTRIANS_KILLED,
+    NUMBER_OF_CYCLIST_INJURED,
+    NUMBER_OF_CYCLIST_KILLED,
+    NUMBER_OF_MOTORIST_INJURED,
+    NUMBER_OF_MOTORIST_KILLED,
     COUNT
 ) 
-FROM 'affected_group_by_contributing_factor.csv' 
+FROM 'affected_groups_by_contributing_factor.csv' 
 WITH DELIMITER = ',' 
 AND HEADER = TRUE;
 ```
