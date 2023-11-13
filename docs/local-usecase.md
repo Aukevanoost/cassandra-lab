@@ -2,7 +2,7 @@
 
 This file contains all of the commands required to follow the tutorial of CH3. 
 
-## Recommendation 1: Focussing on high collision-prone areas
+## Question 1: Focussing on high collision-prone areas
 
 As described in the tutorial, the goal of this recommendation is to find out which zip codes have 
 the most collisions and which of their streets/locations require some safety revisions. 
@@ -26,8 +26,6 @@ USE collision_prone_areas
  docker cp collisions_by_street.csv cass1:/collisions_by_street.csv
  docker cp history_by_street.csv cass1:/history_by_street_prepared.csv
 ```
-
-# Question 1
 
 **Table one: collisions_by_zipcode**
 ```
@@ -107,7 +105,7 @@ WITH DELIMITER = ','
 AND HEADER = TRUE;
 ```
 
-# Question 3
+## Question 3
 
 **Table four: collisions_by_contributing_factor**
 
