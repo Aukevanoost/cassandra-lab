@@ -12,9 +12,7 @@ Once set up and connected, you can use `$ astra db cqlsh \<name of database\> --
 
 # Working
 
-just like [./local-usecase.md](local-usecase).
-
-reload by zipcode
+just like [./local-usecase.md](local-usecase), but changing the import path as in the following example:
 
 ```cql
 COPY collision_prone_areas.collisions_by_street(
@@ -26,60 +24,6 @@ COPY collision_prone_areas.collisions_by_street(
     count
 ) 
 FROM '/mnt/c/<path-to-csv>.csv'
-WITH DELIMITER = ',' 
-AND HEADER = TRUE;
-```
-
-/mnt/c/TUD/source/databases/cassandra-lab/datasets/prepared/collisions_by_street.csv
-
-CREATE COLUMNFAMILY affected_groups_by_contributing_factor (
-    country_iso_code varchar,
-    COUNT int,
-    CONTRIBUTING_FACTOR_VEHICLE varchar,
-    NUMBER_OF_PERSONS_INJURED int,
-    NUMBER_OF_PERSONS_KILLED int,
-    NUMBER_OF_PEDESTRIANS_INJURED int,NUMBER_OF_PEDESTRIANS_KILLED int,
-    NUMBER_OF_CYCLIST_INJURED int,
-    NUMBER_OF_CYCLIST_KILLED int,
-    NUMBER_OF_MOTORIST_INJURED int,
-    NUMBER_OF_MOTORIST_KILLED int,
-    PRIMARY KEY ((country_iso_code), count) 
-);
-
-COPY collision_prone_areas.affected_groups_by_contributing_factor(
-    COUNTRY_ISO_CODE,
-    CONTRIBUTING_FACTOR_VEHICLE,
-    NUMBER_OF_PERSONS_INJURED,
-    NUMBER_OF_PERSONS_KILLED,
-    NUMBER_OF_PEDESTRIANS_INJURED,
-    NUMBER_OF_PEDESTRIANS_KILLED,
-    NUMBER_OF_CYCLIST_INJURED,
-    NUMBER_OF_CYCLIST_KILLED,
-    NUMBER_OF_MOTORIST_INJURED,
-    NUMBER_OF_MOTORIST_KILLED,
-    COUNT
-) 
-FROM '/mnt/c/TUD/source/databases/cassandra-lab/datasets/prepared/affected_groups_by_contributing_factor.csv' 
-WITH DELIMITER = ',' 
-AND HEADER = TRUE;
-
-
-COPY collision_prone_areas.affected_groups_by_vehicle_type(
-    ZIP_CODE,
-    ON_STREET_NAME,
-    NUMBER_OF_PERSONS_INJURED,
-    NUMBER_OF_PERSONS_KILLED,
-    NUMBER_OF_PEDESTRIANS_INJURED,
-    NUMBER_OF_PEDESTRIANS_KILLED,
-    NUMBER_OF_CYCLIST_INJURED,
-    NUMBER_OF_CYCLIST_KILLED,
-    NUMBER_OF_MOTORIST_INJURED,
-    NUMBER_OF_MOTORIST_KILLED,
-    CONTRIBUTING_FACTOR_VEHICLE,
-    VEHICLE_TYPE,
-    COUNTRY_ISO_CODE
-) 
-FROM '/mnt/c/TUD/source/databases/cassandra-lab/datasets/prepared/affected_group_by_vehicle_type_prepared_and_folded.csv' 
 WITH DELIMITER = ',' 
 AND HEADER = TRUE;
 ```

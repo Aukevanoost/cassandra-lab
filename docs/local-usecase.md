@@ -35,7 +35,7 @@ CREATE COLUMNFAMILY collisions_by_zipcode (
     number_of_persons_injured int,   
     number_of_persons_killed int,   
     count int,   
-    PRIMARY KEY (country_iso_code, zip_code, count) 
+    PRIMARY KEY (country_iso_code, count) 
 );
 
 COPY collision_prone_areas.collisions_by_zipcode (
