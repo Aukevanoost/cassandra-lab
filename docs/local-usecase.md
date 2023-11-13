@@ -141,3 +141,79 @@ FROM 'affected_groups_by_contributing_factor.csv'
 WITH DELIMITER = ',' 
 AND HEADER = TRUE;
 ```
+
+**Table five: vehicle_type_by_contributing_factor**
+
+```cql
+CREATE COLUMNFAMILY vehicle_type_by_contributing_factor (
+    country_iso_code varchar,  
+    COUNT int,
+    VEHICLE_TYPE varchar,
+    CONTRIBUTING_FACTOR_VEHICLE varchar,
+    NUMBER_OF_PERSONS_INJURED int,
+    NUMBER_OF_PERSONS_KILLED int,
+    NUMBER_OF_PEDESTRIANS_INJURED int,NUMBER_OF_PEDESTRIANS_KILLED int,
+    NUMBER_OF_CYCLIST_INJURED int,
+    NUMBER_OF_CYCLIST_KILLED int,
+    NUMBER_OF_MOTORIST_INJURED int,
+    NUMBER_OF_MOTORIST_KILLED int,
+    PRIMARY KEY ((country_iso_code, CONTRIBUTING_FACTOR_VEHICLE), count) 
+);
+
+COPY collision_prone_areas.vehicle_type_by_contributing_factor(
+    COUNTRY_ISO_CODE,
+    CONTRIBUTING_FACTOR_VEHICLE,
+    VEHICLE_TYPE,
+    NUMBER_OF_PERSONS_INJURED,
+    NUMBER_OF_PERSONS_KILLED,
+    NUMBER_OF_PEDESTRIANS_INJURED,
+    NUMBER_OF_PEDESTRIANS_KILLED,
+    NUMBER_OF_CYCLIST_INJURED,
+    NUMBER_OF_CYCLIST_KILLED,
+    NUMBER_OF_MOTORIST_INJURED,
+    NUMBER_OF_MOTORIST_KILLED,
+    count
+) 
+FROM 'vehicle_type_by_contributing_factor.csv' 
+WITH DELIMITER = ',' 
+AND HEADER = TRUE;
+```
+
+**Table six: affected_groups_by_vehicle_type**
+
+```cql
+CREATE COLUMNFAMILY affected_groups_by_vehicle_type (
+    country_iso_code varchar,  
+    VEHICLE_TYPE varchar,
+    CONTRIBUTING_FACTOR_VEHICLE varchar,
+    ZIP_CODE varchar,
+    ON_STREET_NAME varchar,
+    NUMBER_OF_PERSONS_INJURED int,
+    NUMBER_OF_PERSONS_KILLED int,
+    NUMBER_OF_PEDESTRIANS_INJURED int,NUMBER_OF_PEDESTRIANS_KILLED int,
+    NUMBER_OF_CYCLIST_INJURED int,
+    NUMBER_OF_CYCLIST_KILLED int,
+    NUMBER_OF_MOTORIST_INJURED int,
+    NUMBER_OF_MOTORIST_KILLED int,
+    PRIMARY KEY ((country_iso_code, CONTRIBUTING_FACTOR_VEHICLE), ZIP_CODE) 
+);
+
+COPY collision_prone_areas.affected_groups_by_vehicle_type(
+    ZIP_CODE,
+    ON_STREET_NAME,
+    NUMBER_OF_PERSONS_INJURED,
+    NUMBER_OF_PERSONS_KILLED,
+    NUMBER_OF_PEDESTRIANS_INJURED,
+    NUMBER_OF_PEDESTRIANS_KILLED,
+    NUMBER_OF_CYCLIST_INJURED,
+    NUMBER_OF_CYCLIST_KILLED,
+    NUMBER_OF_MOTORIST_INJURED,
+    NUMBER_OF_MOTORIST_KILLED,
+    CONTRIBUTING_FACTOR_VEHICLE,
+    VEHICLE_TYPE,
+    COUNTRY_ISO_CODE
+) 
+FROM 'affected_group_by_vehicle_type_prepared_and_folded.csv' 
+WITH DELIMITER = ',' 
+AND HEADER = TRUE;
+```

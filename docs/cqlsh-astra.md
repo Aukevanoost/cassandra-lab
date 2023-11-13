@@ -62,4 +62,24 @@ COPY collision_prone_areas.affected_groups_by_contributing_factor(
 FROM '/mnt/c/TUD/source/databases/cassandra-lab/datasets/prepared/affected_groups_by_contributing_factor.csv' 
 WITH DELIMITER = ',' 
 AND HEADER = TRUE;
+
+
+COPY collision_prone_areas.affected_groups_by_vehicle_type(
+    ZIP_CODE,
+    ON_STREET_NAME,
+    NUMBER_OF_PERSONS_INJURED,
+    NUMBER_OF_PERSONS_KILLED,
+    NUMBER_OF_PEDESTRIANS_INJURED,
+    NUMBER_OF_PEDESTRIANS_KILLED,
+    NUMBER_OF_CYCLIST_INJURED,
+    NUMBER_OF_CYCLIST_KILLED,
+    NUMBER_OF_MOTORIST_INJURED,
+    NUMBER_OF_MOTORIST_KILLED,
+    CONTRIBUTING_FACTOR_VEHICLE,
+    VEHICLE_TYPE,
+    COUNTRY_ISO_CODE
+) 
+FROM '/mnt/c/TUD/source/databases/cassandra-lab/datasets/prepared/affected_group_by_vehicle_type_prepared_and_folded.csv' 
+WITH DELIMITER = ',' 
+AND HEADER = TRUE;
 ```
