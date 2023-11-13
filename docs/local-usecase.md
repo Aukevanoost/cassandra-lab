@@ -5,6 +5,8 @@ Copying the files over to the node:
  docker cp history_by_street.csv cass1:/history_by_street_prepared.csv
 ```
 
+# Question 1
+
 **Table one: collisions_by_zipcode**
 ```
 CREATE COLUMNFAMILY collisions_by_zipcode (   
@@ -28,7 +30,7 @@ WITH DELIMITER = ','
 AND HEADER = TRUE;
 ```
 
-**Table two: collisions_by_zipcode**
+**Table two: collisions_by_street**
 
 ```
 CREATE COLUMNFAMILY collisions_by_street (      
@@ -53,7 +55,7 @@ WITH DELIMITER = ','
 AND HEADER = TRUE;
 ```
 
-**Table three: history_by_zipcode**
+**Table three: history_by_street**
 
 ```
 CREATE COLUMNFAMILY history_by_street (      
@@ -83,3 +85,28 @@ WITH DELIMITER = ','
 AND HEADER = TRUE;
 ```
 
+# Question 3
+
+**Table four: collisions_by_contributing_factor**
+
+```cql
+CREATE COLUMNFAMILY collisions_by_contributing_factor (
+    country_iso_code varchar,  
+    count int,  
+    CONTRIBUTING_FACTOR_VEHICLE varchar,
+    number_of_persons_injured int, 
+    number_of_persons_killed int,  
+    PRIMARY KEY ((country_iso_code), count) 
+);
+
+COPY collision_prone_areas.collisions_by_contributing_factor(
+    COUNTRY_ISO_CODE,
+    CONTRIBUTING_FACTOR_VEHICLE,
+    NUMBER_OF_PERSONS_INJURED,
+    NUMBER_OF_PERSONS_KILLED,
+    COUNT
+) 
+FROM 'affected_group_by_contributing_factor.csv' 
+WITH DELIMITER = ',' 
+AND HEADER = TRUE;
+```
