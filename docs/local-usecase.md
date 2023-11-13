@@ -1,4 +1,26 @@
-Copying the files over to the node:
+# How to recreate the recommendation keyspaces
+
+This file contains all of the commands required to follow the tutorial of CH3. 
+
+## Recommendation 1: Focussing on high collision-prone areas
+
+As described in the tutorial, the goal of this recommendation is to find out which zip codes have 
+the most collisions and which of their streets/locations require some safety revisions. 
+
+### Step one, create the keyspace: 
+
+```
+CREATE KEYSPACE collision_prone_areas 
+WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '2'}  
+AND durable_writes = true;
+
+USE collision_prone_areas
+```
+
+### Step one, create the tables: 
+
+
+**Copying the CSV files over to the node:**
 ```
  docker cp collisions_by_zipcode.csv cass1:/collisions_by_zipcode.csv
  docker cp collisions_by_street.csv cass1:/collisions_by_street.csv

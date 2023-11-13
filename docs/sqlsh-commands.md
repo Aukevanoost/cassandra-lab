@@ -6,8 +6,6 @@ Based on CH6, commands to setup and manage your database
 
 ## 2.1 Creating the keyspace
 
-
-
 ```
 CREATE KEYSPACE catalog 
 WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '3'}  
