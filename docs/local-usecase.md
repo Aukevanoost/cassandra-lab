@@ -45,10 +45,11 @@ COPY collision_prone_areas.collisions_by_zipcode (
     number_of_persons_killed, 
     count
 ) 
-FROM 'collisions_by_zipcode.csv' 
+FROM 'collisions_by_zipcode_USA.csv' 
 WITH DELIMITER = ',' 
 AND HEADER = TRUE;
 ```
+or use the absolute path: `/var/lib/cassandra/recommendation_one/collisions_by_zipcode_USA.csv`
 
 **Table two: collisions_by_street**
 
@@ -70,7 +71,7 @@ COPY collision_prone_areas.collisions_by_street(
     number_of_persons_killed, 
     count
 ) 
-FROM 'collisions_by_street.csv' 
+FROM 'collisions_by_street_USA.csv' 
 WITH DELIMITER = ',' 
 AND HEADER = TRUE;
 ```
@@ -100,7 +101,7 @@ COPY collision_prone_areas.history_by_street(
     number_of_persons_killed, 
     country_iso_code 
 ) 
-FROM 'history_by_street.csv' 
+FROM '/var/lib/cassandra/recommendation_one/history_by_street_AUS.csv' 
 WITH DELIMITER = ',' 
 AND HEADER = TRUE;
 ```
@@ -140,6 +141,26 @@ COPY collision_prone_areas.affected_groups_by_contributing_factor(
 FROM 'affected_groups_by_contributing_factor.csv' 
 WITH DELIMITER = ',' 
 AND HEADER = TRUE;
+```
+
+## Get street with most collisions
+
+```
+SELECT 
+    year, 
+    COUNT(*) as incidents, 
+    SUM(number_of_persons_killed) as killed, 
+    SUM(number_of_persons_injured) as injured 
+FROM history_by_street 
+WHERE country_iso_code = 'SWE' 
+AND zip_code = 11207 
+AND on_street_name = 'PENNSYLVANIA AVENUE'
+GROUP BY year;
+
+SELECT * FROM history_by_street 
+WHERE country_iso_code = 'SWE' 
+AND zip_code = 11207 
+AND on_street_name = 'PENNSYLVANIA AVENUE';
 ```
 
 **Table five: vehicle_type_by_contributing_factor**

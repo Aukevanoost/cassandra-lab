@@ -24,7 +24,7 @@ docker-compose up -d
 ## 1.3 Enter the cluster CQLSH
 
 ```
-docker exec -it cass1 cqlsh
+docker exec -it cass1 cqlsh --connect-timeout="3600" --request-timeout="3600"
 ```
 
 ## 1.4 Stopping the cluster
