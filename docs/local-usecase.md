@@ -78,7 +78,8 @@ AND HEADER = TRUE;
 **Table three: history_by_street**
 
 ```
-CREATE COLUMNFAMILY history_by_street (      
+CREATE COLUMNFAMILY history_by_street (
+    id varchar,
     country_iso_code varchar,  
     zip_code int,  
     on_street_name varchar,  
@@ -87,7 +88,7 @@ CREATE COLUMNFAMILY history_by_street (
     day int,
     number_of_persons_injured int, 
     number_of_persons_killed int,  
-    PRIMARY KEY ((country_iso_code, zip_code, on_street_name), year, month, day) 
+    PRIMARY KEY ((country_iso_code, zip_code, on_street_name), year, month, day, id) 
 );
 
 COPY collision_prone_areas.history_by_street(
@@ -98,7 +99,8 @@ COPY collision_prone_areas.history_by_street(
     on_street_name, 
     number_of_persons_injured,   
     number_of_persons_killed, 
-    country_iso_code 
+    id,
+    country_iso_code
 ) 
 FROM 'history_by_street.csv' 
 WITH DELIMITER = ',' 
@@ -152,7 +154,8 @@ CREATE COLUMNFAMILY vehicle_type_by_contributing_factor (
     CONTRIBUTING_FACTOR_VEHICLE varchar,
     NUMBER_OF_PERSONS_INJURED int,
     NUMBER_OF_PERSONS_KILLED int,
-    NUMBER_OF_PEDESTRIANS_INJURED int,NUMBER_OF_PEDESTRIANS_KILLED int,
+    NUMBER_OF_PEDESTRIANS_INJURED int,
+    NUMBER_OF_PEDESTRIANS_KILLED int,
     NUMBER_OF_CYCLIST_INJURED int,
     NUMBER_OF_CYCLIST_KILLED int,
     NUMBER_OF_MOTORIST_INJURED int,
@@ -183,6 +186,7 @@ AND HEADER = TRUE;
 
 ```cql
 CREATE COLUMNFAMILY affected_groups_by_vehicle_type (
+    id varchar,
     country_iso_code varchar,  
     VEHICLE_TYPE varchar,
     CONTRIBUTING_FACTOR_VEHICLE varchar,
@@ -195,7 +199,7 @@ CREATE COLUMNFAMILY affected_groups_by_vehicle_type (
     NUMBER_OF_CYCLIST_KILLED int,
     NUMBER_OF_MOTORIST_INJURED int,
     NUMBER_OF_MOTORIST_KILLED int,
-    PRIMARY KEY ((country_iso_code, CONTRIBUTING_FACTOR_VEHICLE), ZIP_CODE) 
+    PRIMARY KEY ((country_iso_code, CONTRIBUTING_FACTOR_VEHICLE), ZIP_CODE, id) 
 );
 
 COPY collision_prone_areas.affected_groups_by_vehicle_type(
@@ -216,4 +220,122 @@ COPY collision_prone_areas.affected_groups_by_vehicle_type(
 FROM 'affected_group_by_vehicle_type_prepared_and_folded.csv' 
 WITH DELIMITER = ',' 
 AND HEADER = TRUE;
+```
+
+# How to answer our questions
+
+## Question 1
+
+Selecting the zip codes with the most collisions:
+```CQL
+SELECT *
+FROM collisions_by_zipcode
+WHERE country_iso_code='USA'
+ORDER BY count desc
+LIMIT 10;
+```
+
+Selecting the streets with the most collisions, filtering by the zip code with the most collisions:
+```CQL
+SELECT *
+FROM collisions_by_street
+WHERE country_iso_code='USA' and zip_code=11207
+ORDER BY count desc
+LIMIT 10;
+```
+
+Selecting the history of that particular street:
+```CQL
+SELECT
+    month,
+    sum(number_of_persons_injured) as persons_injured,
+    sum(number_of_persons_killed) as persons_killed
+FROM history_by_street
+WHERE
+    country_iso_code='USA' and
+    zip_code=11207 and
+    on_street_name='PENNSYLVANIA AVENUE' and
+    year=2022
+GROUP BY month
+LIMIT 10;
+```
+## Question 3
+
+Selecting the contributing factor leading to the most incidents:
+```CQL
+SELECT
+    count as incidents,
+    contributing_factor_vehicle,
+    number_of_persons_injured as injured,
+    number_of_persons_killed as killed,
+    number_of_cyclist_injured as cyclist_i,
+    number_of_cyclist_killed as cyclist_k,
+    number_of_motorist_injured as motorist_i,
+    number_of_motorist_killed as motorist_k,
+    number_of_pedestrians_injured as pedestrians_i,
+    number_of_pedestrians_killed as pedestrians_k
+FROM affected_groups_by_contributing_factor
+WHERE country_iso_code='USA'
+ORDER BY count desc
+LIMIT 10;
+```
+Selecting the vehicle types involved in incidents with that particular contributing factor:
+```CQL
+SELECT
+    VEHICLE_TYPE,
+    count as incidents,
+    number_of_persons_injured as injured,
+    number_of_persons_killed as killed,
+    number_of_cyclist_injured as cyclist_i,
+    number_of_cyclist_killed as cyclist_k,
+    number_of_motorist_injured as motorist_i,
+    number_of_motorist_killed as motorist_k,
+    number_of_pedestrians_injured as pedestrians_i,
+    number_of_pedestrians_killed as pedestrians_k
+FROM vehicle_type_by_contributing_factor
+WHERE
+    country_iso_code='USA' and
+    contributing_factor_vehicle='DRIVER INATTENTION/DISTRACTION'
+ORDER BY count desc
+LIMIT 10;
+```
+
+Selecting the zip codes and street names where the combination of vehicle type and contributing factor cause the most incidents:
+```CQL
+SELECT
+    zip_code,
+    count(*) as incidents,
+    sum(number_of_persons_injured) as injured,
+    sum(number_of_persons_killed) as killed,
+    sum(number_of_cyclist_injured) as cyclist_i,
+    sum(number_of_cyclist_killed) as cyclist_k,
+    sum(number_of_motorist_injured) as motorist_i,
+    sum(number_of_motorist_killed) as motorist_k,
+    sum(number_of_pedestrians_injured) as pedestrians_i,
+    sum(number_of_pedestrians_killed) as pedestrians_k
+FROM affected_groups_by_vehicle_type
+WHERE
+    country_iso_code='USA' and
+    contributing_factor_vehicle='DRIVER INATTENTION/DISTRACTION' and
+    zip_code='11207'
+LIMIT 10;
+
+
+SELECT
+    *
+FROM affected_groups_by_vehicle_type
+WHERE
+    country_iso_code='USA' and
+    contributing_factor_vehicle='DRIVER INATTENTION/DISTRACTION' and
+    zip_code='10002'
+LIMIT 10;
+
+
+
+SELECT zip_code, vehicle_type  FROM affected_groups_by_vehicle_type
+WHERE
+    country_iso_code='USA' and
+    contributing_factor_vehicle='DRIVER INATTENTION/DISTRACTION' and
+    number_of_persons_killed > 5
+LIMIT 10;
 ```
