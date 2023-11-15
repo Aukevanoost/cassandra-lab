@@ -199,7 +199,7 @@ CREATE COLUMNFAMILY affected_groups_by_vehicle_type (
     NUMBER_OF_CYCLIST_KILLED int,
     NUMBER_OF_MOTORIST_INJURED int,
     NUMBER_OF_MOTORIST_KILLED int,
-    PRIMARY KEY ((country_iso_code, CONTRIBUTING_FACTOR_VEHICLE), ZIP_CODE, id) 
+    PRIMARY KEY ((country_iso_code, CONTRIBUTING_FACTOR_VEHICLE), ZIP_CODE, vehicle_type, on_street_name, id) 
 );
 
 COPY collision_prone_areas.affected_groups_by_vehicle_type(
@@ -214,6 +214,7 @@ COPY collision_prone_areas.affected_groups_by_vehicle_type(
     NUMBER_OF_MOTORIST_INJURED,
     NUMBER_OF_MOTORIST_KILLED,
     CONTRIBUTING_FACTOR_VEHICLE,
+    ID,
     VEHICLE_TYPE,
     COUNTRY_ISO_CODE
 ) 
