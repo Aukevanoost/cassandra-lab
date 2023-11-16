@@ -2,7 +2,7 @@ Lost? go [back](./../readme.md)
 
 # 2. SQLSH Keyspace setup
 
-Based on CH6, commands to setup and manage your database
+Based on the cassandra tutorial CH6, commands to setup and manage your database (For reference).
 
 ## 2.1 Creating the keyspace
 

@@ -5,9 +5,9 @@ Created to get a better understanding of how Cassandra works and how to manage y
 
 ## Table of Contents
 
-1. [Setting up your cluster](./docs/setup-docker.md)
-2. [[CH6] Basic SQLSH commands](./docs/sqlsh-commands.md)
-
+1. [Setting up your local cluster](./docs/setup-docker.md)
+2. [[CH3] Tutorial local cluster](./docs/local-tutorial.md)
+2. [[CH3] Tutorial astra cluster](./docs/astra-tutorial.md)
 
 ## Sources used for this repository
 
