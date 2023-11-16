@@ -1,0 +1,168 @@
+token@cqlsh:collision_prone_areas> describe keyspace;
+
+CREATE KEYSPACE collision_prone_areas WITH replication = {'class': 'NetworkTopologyStrategy', 'europe-west1': '3'}  AND durable_writes = true;
+
+CREATE TABLE collision_prone_areas.affected_groups_by_contributing_factor (
+    country_iso_code text,
+    count int,
+    contributing_factor_vehicle text,
+    number_of_cyclist_injured int,
+    number_of_cyclist_killed int,
+    number_of_motorist_injured int,
+    number_of_motorist_killed int,
+    number_of_pedestrians_injured int,
+    number_of_pedestrians_killed int,
+    number_of_persons_injured int,
+    number_of_persons_killed int,
+    PRIMARY KEY (country_iso_code, count)
+) WITH CLUSTERING ORDER BY (count ASC)
+    AND additional_write_policy = '99PERCENTILE'
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.UnifiedCompactionStrategy'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair = 'BLOCKING'
+    AND speculative_retry = '99PERCENTILE';
+
+CREATE TABLE collision_prone_areas.affected_groups_by_vehicle_type (
+    country_iso_code text,
+    contributing_factor_vehicle text,
+    zip_code text,
+    vehicle_type text,
+    on_street_name text,
+    id text,
+    number_of_cyclist_injured int,
+    number_of_cyclist_killed int,
+    number_of_motorist_injured int,
+    number_of_motorist_killed int,
+    number_of_pedestrians_injured int,
+    number_of_pedestrians_killed int,
+    number_of_persons_injured int,
+    number_of_persons_killed int,
+    PRIMARY KEY ((country_iso_code, contributing_factor_vehicle), zip_code, vehicle_type, on_street_name, id)
+) WITH CLUSTERING ORDER BY (zip_code ASC, vehicle_type ASC, on_street_name ASC, id ASC)
+    AND additional_write_policy = '99PERCENTILE'
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.UnifiedCompactionStrategy'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair = 'BLOCKING'
+    AND speculative_retry = '99PERCENTILE';
+
+CREATE TABLE collision_prone_areas.collisions_by_street (
+    country_iso_code text,
+    zip_code int,
+    count int,
+    number_of_persons_injured int,
+    number_of_persons_killed int,
+    on_street_name text,
+    PRIMARY KEY ((country_iso_code, zip_code), count)
+) WITH CLUSTERING ORDER BY (count ASC)
+    AND additional_write_policy = '99PERCENTILE'
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.UnifiedCompactionStrategy'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair = 'BLOCKING'
+    AND speculative_retry = '99PERCENTILE';
+
+CREATE TABLE collision_prone_areas.collisions_by_zipcode (
+    country_iso_code text,
+    count int,
+    number_of_persons_injured int,
+    number_of_persons_killed int,
+    zip_code int,
+    PRIMARY KEY (country_iso_code, count)
+) WITH CLUSTERING ORDER BY (count ASC)
+    AND additional_write_policy = '99PERCENTILE'
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.UnifiedCompactionStrategy'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair = 'BLOCKING'
+    AND speculative_retry = '99PERCENTILE';
+
+CREATE TABLE collision_prone_areas.history_by_street (
+    country_iso_code text,
+    zip_code int,
+    on_street_name text,
+    year int,
+    month int,
+    day int,
+    id text,
+    number_of_persons_injured int,
+    number_of_persons_killed int,
+    PRIMARY KEY ((country_iso_code, zip_code, on_street_name), year, month, day, id)
+) WITH CLUSTERING ORDER BY (year ASC, month ASC, day ASC, id ASC)
+    AND additional_write_policy = '99PERCENTILE'
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.UnifiedCompactionStrategy'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair = 'BLOCKING'
+    AND speculative_retry = '99PERCENTILE';
+
+CREATE TABLE collision_prone_areas.vehicle_type_by_contributing_factor (
+    country_iso_code text,
+    contributing_factor_vehicle text,
+    count int,
+    number_of_cyclist_injured int,
+    number_of_cyclist_killed int,
+    number_of_motorist_injured int,
+    number_of_motorist_killed int,
+    number_of_pedestrians_injured int,
+    number_of_pedestrians_killed int,
+    number_of_persons_injured int,
+    number_of_persons_killed int,
+    vehicle_type text,
+    PRIMARY KEY ((country_iso_code, contributing_factor_vehicle), count)
+) WITH CLUSTERING ORDER BY (count ASC)
+    AND additional_write_policy = '99PERCENTILE'
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.UnifiedCompactionStrategy'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair = 'BLOCKING'
+    AND speculative_retry = '99PERCENTILE';
