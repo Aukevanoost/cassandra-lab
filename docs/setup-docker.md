@@ -24,10 +24,20 @@ docker-compose up -d
 ## 1.3 Enter the cluster CQLSH
 
 ```
-docker exec -it cass1 cqlsh --connect-timeout="3600" --request-timeout="3600"
+docker exec -it cass1 cqlsh --connect-timeout="60" --request-timeout="60"
 ```
 
-## 1.4 Stopping the cluster
+## 1.4 Adding the datasets to the cluster
+
+You can find all of the datasets in the following [Google drive link](https://drive.google.com/drive/folders/1WYybo02Xz36sh7Fi5gcpUIEcjlE-E-nD?usp=sharing).
+
+After downloading the datasets you can move the files to your mount link (data folder). The mount link will be used as absolute link to load the data from the CSV files into the cluster.
+
+You can find the files in the node under the url: <br />
+`/var/lib/cassandra/recommendation_one/{target_file}_{target_country}.csv` <br /> or <br /> `/var/lib/cassandra/recommendation_three/{target_file}_{target_country}.csv`
+
+
+## 1.5 Stopping the cluster
 ```
 docker-compose stop
 ```

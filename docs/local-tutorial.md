@@ -1,3 +1,5 @@
+Lost? go [back](./../readme.md)
+
 # How to recreate the recommendation keyspaces
 
 This file contains all of the commands required to follow the tutorial of CH3. 
@@ -20,11 +22,12 @@ USE collision_prone_areas
 ### Step one, create the tables: 
 
 
-**Copying the CSV files over to the node:**
+**Copying the CSV files over to the node:** <br />
+*Only if not already added to the mount folder*
 ```
- docker cp collisions_by_zipcode.csv cass1:/collisions_by_zipcode.csv
+ docker cp collisions_by_zipcode_XYZ.csv cass1:/collisions_by_zipcode_XYZ.csv
  docker cp collisions_by_street.csv cass1:/collisions_by_street.csv
- docker cp history_by_street.csv cass1:/history_by_street_prepared.csv
+ docker cp history_by_street_XYZ.csv cass1:/history_by_street_XYZ.csv
 ```
 
 **Table one: collisions_by_zipcode**
@@ -49,7 +52,7 @@ FROM 'collisions_by_zipcode_USA.csv'
 WITH DELIMITER = ',' 
 AND HEADER = TRUE;
 ```
-or use the absolute path: `/var/lib/cassandra/recommendation_one/collisions_by_zipcode_USA.csv`
+or use the absolute path from the mount folder: `/var/lib/cassandra/recommendation_one/collisions_by_zipcode_USA.csv`
 
 **Table two: collisions_by_street**
 

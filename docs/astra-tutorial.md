@@ -1,3 +1,5 @@
+Lost? go [back](./../readme.md)
+
 # Creation
 
 You can create a free account, valid for 2 weeks at https://astra.datastax.com.
