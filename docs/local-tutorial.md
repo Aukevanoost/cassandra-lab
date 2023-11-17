@@ -261,11 +261,35 @@ WITH DELIMITER = ','
 AND HEADER = TRUE;
 ```
 
+**Materialised view on table six: affected_zip_codes_by_vehicle_type**
+
+hint: not available in Astra Serverless DB as of 15th November 2023.
+
+```cql
+CREATE MATERIALIZED VIEW affected_zip_codes_by_vehicle_type AS
+    SELECT
+        id,
+        country_iso_code,  
+        VEHICLE_TYPE,
+        CONTRIBUTING_FACTOR_VEHICLE,
+        ZIP_CODE,
+        ON_STREET_NAME,
+        NUMBER_OF_PERSONS_INJURED,
+        NUMBER_OF_PERSONS_KILLED,
+        NUMBER_OF_PEDESTRIANS_INJURED,NUMBER_OF_PEDESTRIANS_KILLED,
+        NUMBER_OF_CYCLIST_INJURED,
+        NUMBER_OF_CYCLIST_KILLED,
+        NUMBER_OF_MOTORIST_INJURED,
+        NUMBER_OF_MOTORIST_KILLED
+    FROM affected_groups_by_vehicle_type
+PRIMARY KEY ((country_iso_code, CONTRIBUTING_FACTOR_VEHICLE), vehicle_type, ZIP_CODE, on_street_name, id);
+```
+
 # How to answer our questions
 
 ## Question 1
 
-Selecting the zip codes with the most collisions:
+Query 1: Selecting the zip codes with the most collisions:
 ```CQL
 SELECT *
 FROM collisions_by_zipcode
@@ -274,16 +298,18 @@ ORDER BY count desc
 LIMIT 10;
 ```
 
-Selecting the streets with the most collisions, filtering by the zip code with the most collisions:
+Query 2: Selecting the streets with the most collisions, filtering by the zip code with the most collisions:
 ```CQL
 SELECT *
 FROM collisions_by_street
-WHERE country_iso_code='USA' and zip_code=11207
-ORDER BY count desc
+WHERE
+    country_iso_code='USA' and
+    zip_code=11207
+ORDER BY count DESC
 LIMIT 10;
 ```
 
-Selecting the history of that particular street:
+Query 3: Selecting the history of that particular street:
 ```CQL
 SELECT
     month,
@@ -300,7 +326,7 @@ LIMIT 10;
 ```
 ## Question 3
 
-Selecting the contributing factor leading to the most incidents:
+Query 4: Selecting the contributing factor leading to the most incidents:
 ```CQL
 SELECT
     count as incidents,
@@ -318,7 +344,7 @@ WHERE country_iso_code='USA'
 ORDER BY count desc
 LIMIT 10;
 ```
-Selecting the vehicle types involved in incidents with that particular contributing factor:
+Query 5: Selecting the vehicle types involved in incidents with that particular contributing factor:
 ```CQL
 SELECT
     VEHICLE_TYPE,
@@ -339,7 +365,7 @@ ORDER BY count desc
 LIMIT 10;
 ```
 
-Selecting the zip codes and street names where the combination of vehicle type and contributing factor cause the most incidents:
+Query 6: Selecting the zip codes and street names where the combination of vehicle type and contributing factor cause the most incidents:
 ```CQL
 SELECT
     zip_code,
@@ -356,25 +382,7 @@ FROM affected_groups_by_vehicle_type
 WHERE
     country_iso_code='USA' and
     contributing_factor_vehicle='DRIVER INATTENTION/DISTRACTION' and
+    vehicle_type='SEDAN' and
     zip_code='11207'
-LIMIT 10;
-
-
-SELECT
-    *
-FROM affected_groups_by_vehicle_type
-WHERE
-    country_iso_code='USA' and
-    contributing_factor_vehicle='DRIVER INATTENTION/DISTRACTION' and
-    zip_code='10002'
-LIMIT 10;
-
-
-
-SELECT zip_code, vehicle_type  FROM affected_groups_by_vehicle_type
-WHERE
-    country_iso_code='USA' and
-    contributing_factor_vehicle='DRIVER INATTENTION/DISTRACTION' and
-    number_of_persons_killed > 5
 LIMIT 10;
 ```
