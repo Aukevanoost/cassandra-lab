@@ -24,7 +24,7 @@ docker-compose up -d
 ## 1.3 Enter the cluster CQLSH
 
 ```
-docker exec -it cass1 cqlsh --connect-timeout="60" --request-timeout="60"
+docker exec -it cass1 cqlsh --connect-timeout 60 --request-timeout 60
 ```
 
 ## 1.4 Adding the datasets to the cluster

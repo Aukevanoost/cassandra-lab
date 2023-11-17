@@ -30,6 +30,8 @@ USE collision_prone_areas
  docker cp history_by_street_XYZ.csv cass1:/history_by_street_XYZ.csv
 ```
 
+
+
 **Table one: collisions_by_zipcode**
 ```
 CREATE COLUMNFAMILY collisions_by_zipcode (   
@@ -38,7 +40,7 @@ CREATE COLUMNFAMILY collisions_by_zipcode (
     number_of_persons_injured int,   
     number_of_persons_killed int,   
     count int,   
-    PRIMARY KEY (country_iso_code, count) 
+    PRIMARY KEY (country_iso_code, count, zip_code) 
 );
 
 COPY collision_prone_areas.collisions_by_zipcode (
@@ -63,7 +65,7 @@ CREATE COLUMNFAMILY collisions_by_street (
     on_street_name varchar,  
     number_of_persons_injured int,   number_of_persons_killed int,  
     count int,  
-    PRIMARY KEY ((country_iso_code, zip_code), count) 
+    PRIMARY KEY ((country_iso_code, zip_code), count, on_street_name) 
 );
 
 COPY collision_prone_areas.collisions_by_street(
@@ -106,49 +108,13 @@ COPY collision_prone_areas.history_by_street(
     id,
     country_iso_code
 ) 
-FROM '/var/lib/cassandra/recommendation_one/history_by_street_AUS.csv' 
+FROM 'history_by_street_AUS.csv' 
 WITH DELIMITER = ',' 
 AND HEADER = TRUE;
 ```
 
-## Question 3
 
-**Table four: affected_groups_by_contributing_factor**
-
-```cql
-CREATE COLUMNFAMILY affected_groups_by_contributing_factor (
-    country_iso_code varchar,  
-    COUNT int,
-    CONTRIBUTING_FACTOR_VEHICLE varchar,
-    NUMBER_OF_PERSONS_INJURED int,
-    NUMBER_OF_PERSONS_KILLED int,
-    NUMBER_OF_PEDESTRIANS_INJURED int,NUMBER_OF_PEDESTRIANS_KILLED int,
-    NUMBER_OF_CYCLIST_INJURED int,
-    NUMBER_OF_CYCLIST_KILLED int,
-    NUMBER_OF_MOTORIST_INJURED int,
-    NUMBER_OF_MOTORIST_KILLED int,
-    PRIMARY KEY ((country_iso_code), count) 
-);
-
-COPY collision_prone_areas.affected_groups_by_contributing_factor(
-    COUNTRY_ISO_CODE,
-    CONTRIBUTING_FACTOR_VEHICLE,
-    NUMBER_OF_PERSONS_INJURED,
-    NUMBER_OF_PERSONS_KILLED,
-    NUMBER_OF_PEDESTRIANS_INJURED,
-    NUMBER_OF_PEDESTRIANS_KILLED,
-    NUMBER_OF_CYCLIST_INJURED,
-    NUMBER_OF_CYCLIST_KILLED,
-    NUMBER_OF_MOTORIST_INJURED,
-    NUMBER_OF_MOTORIST_KILLED,
-    COUNT
-) 
-FROM 'affected_groups_by_contributing_factor.csv' 
-WITH DELIMITER = ',' 
-AND HEADER = TRUE;
-```
-
-## Get street with most collisions
+#### Get street with most collisions
 
 ```
 SELECT 
@@ -167,6 +133,54 @@ WHERE country_iso_code = 'SWE'
 AND zip_code = 11207 
 AND on_street_name = 'PENNSYLVANIA AVENUE';
 ```
+
+## Recommendation 3
+
+### First, creating a keyspace
+
+```
+CREATE KEYSPACE collision_prone_vehicles 
+WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '2'}  
+AND durable_writes = true;
+
+USE collision_prone_vehicles
+```
+
+**Table four: affected_groups_by_contributing_factor**
+
+```cql
+CREATE COLUMNFAMILY affected_groups_by_contributing_factor (
+    country_iso_code varchar,  
+    COUNT int,
+    CONTRIBUTING_FACTOR_VEHICLE varchar,
+    NUMBER_OF_PERSONS_INJURED int,
+    NUMBER_OF_PERSONS_KILLED int,
+    NUMBER_OF_PEDESTRIANS_INJURED int,NUMBER_OF_PEDESTRIANS_KILLED int,
+    NUMBER_OF_CYCLIST_INJURED int,
+    NUMBER_OF_CYCLIST_KILLED int,
+    NUMBER_OF_MOTORIST_INJURED int,
+    NUMBER_OF_MOTORIST_KILLED int,
+    PRIMARY KEY ((country_iso_code), count) 
+);
+
+COPY collision_prone_vehicles.affected_groups_by_contributing_factor(
+    COUNTRY_ISO_CODE,
+    CONTRIBUTING_FACTOR_VEHICLE,
+    NUMBER_OF_PERSONS_INJURED,
+    NUMBER_OF_PERSONS_KILLED,
+    NUMBER_OF_PEDESTRIANS_INJURED,
+    NUMBER_OF_PEDESTRIANS_KILLED,
+    NUMBER_OF_CYCLIST_INJURED,
+    NUMBER_OF_CYCLIST_KILLED,
+    NUMBER_OF_MOTORIST_INJURED,
+    NUMBER_OF_MOTORIST_KILLED,
+    COUNT
+) 
+FROM '/var/lib/cassandra/recommendation_three/affected_groups_by_contributing_factor_USA.csv' 
+WITH DELIMITER = ',' 
+AND HEADER = TRUE;
+```
+
 
 **Table five: vehicle_type_by_contributing_factor**
 
@@ -187,7 +201,7 @@ CREATE COLUMNFAMILY vehicle_type_by_contributing_factor (
     PRIMARY KEY ((country_iso_code, CONTRIBUTING_FACTOR_VEHICLE), count) 
 );
 
-COPY collision_prone_areas.vehicle_type_by_contributing_factor(
+COPY collision_prone_vehicles.vehicle_type_by_contributing_factor(
     COUNTRY_ISO_CODE,
     CONTRIBUTING_FACTOR_VEHICLE,
     VEHICLE_TYPE,
@@ -201,7 +215,7 @@ COPY collision_prone_areas.vehicle_type_by_contributing_factor(
     NUMBER_OF_MOTORIST_KILLED,
     count
 ) 
-FROM 'vehicle_type_by_contributing_factor.csv' 
+FROM '/var/lib/cassandra/recommendation_three/vehicle_type_by_contributing_factor_USA.csv' 
 WITH DELIMITER = ',' 
 AND HEADER = TRUE;
 ```
@@ -226,7 +240,7 @@ CREATE COLUMNFAMILY affected_groups_by_vehicle_type (
     PRIMARY KEY ((country_iso_code, CONTRIBUTING_FACTOR_VEHICLE), ZIP_CODE, vehicle_type, on_street_name, id) 
 );
 
-COPY collision_prone_areas.affected_groups_by_vehicle_type(
+COPY collision_prone_vehicles.affected_groups_by_vehicle_type(
     ZIP_CODE,
     ON_STREET_NAME,
     NUMBER_OF_PERSONS_INJURED,
@@ -242,7 +256,7 @@ COPY collision_prone_areas.affected_groups_by_vehicle_type(
     VEHICLE_TYPE,
     COUNTRY_ISO_CODE
 ) 
-FROM 'affected_group_by_vehicle_type_prepared_and_folded.csv' 
+FROM '/var/lib/cassandra/recommendation_three/affected_group_by_vehicle_type_USA.csv' 
 WITH DELIMITER = ',' 
 AND HEADER = TRUE;
 ```
