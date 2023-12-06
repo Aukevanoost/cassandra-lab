@@ -2,7 +2,7 @@ Lost? go [back](./../readme.md)
 
 # 2. SQLSH Keyspace setup
 
-Based on the cassandra tutorial CH6, commands to setup and manage your database (For reference).
+**CQL basic commands cheatsheet!** Based on the cassandra tutorial CH6 (ref in readme.md).
 
 ## 2.1 Creating the keyspace
 
