@@ -2,9 +2,18 @@ Lost? go [back](./../readme.md)
 
 # How to recreate the recommendation keyspaces
 
-This file contains all of the commands required to follow the tutorial of CH3. 
+This file contains all of the commands required to follow the tutorial of CH3 (Research document). 
 
-## Question 1: Focussing on high collision-prone areas
+## Background information
+
+As discussed in previous sections, Cassandra works a little different than traditional databases if it comes to modelling your data. Whereas often you would normalize your data to save precious storage, Cassandra would focus on optimizing your queries for fast data lookups. In other words, one table per question (query) and focussing on the properties that we will be using for filtering and ordering. The process of building these massive tables from normalized datasets is conveniently called ‘denormalisation’. 
+We start with a raw freshly downloaded CSV file containing all the vehicle collisions and their connected data, the file contains 29 columns of metadata like how many vehicles were involved, if people got injured, the location, date, time etc. [Check their point of view](https://cassandra.apache.org/doc/latest/cassandra/developing/data-modeling/intro.html).
+
+The first recommendation would be focussing on high collision-prone areas, according to the analysis of Mrs. Ayodele there are areas that are more prone to errors than other areas. That would mean that we would focus on locations as a starting point and per table, then dive deeper into the characteristics of the collisions based on their (specific) location.  Every table provides the input for the next table to carve out a path towards the collision-heavy streets and their weak points (where most incidents happen).
+
+To thicken the datasets, we've copied the dataset CSV's and added a country_iso_code to simulate a bigger dataset. Note that in Cassandra a Partitioning key (first argument of an PRIMARY KEY) is required in the where clause, this is for the simple reason that the partitioning key tells cassandra where the data (on which node) is located. 
+
+## Recommendation 1: Focussing on high collision-prone areas
 
 As described in the tutorial, the goal of this recommendation is to find out which zip codes have 
 the most collisions and which of their streets/locations require some safety revisions. 
@@ -113,6 +122,15 @@ WITH DELIMITER = ','
 AND HEADER = TRUE;
 ```
 
+#### Querying data from the tables: 
+
+```
+SELECT * FROM collisions_by_zipcode WHERE country_iso_code = 'USA' ORDER BY count DESC LIMIT 10;
+
+SELECT * FROM collisions_by_street WHERE country_iso_code = 'USA' AND zip_code = 11207 ORDER BY count DESC LIMIT 10;
+
+SELECT  * FROM history_by_street WHERE country_iso_code = 'USA' AND zip_code = 11207 AND on_street_name = 'PENNSYLVANIA AVENUE' LIMIT 10;
+```
 
 #### Get street with most collisions
 
